@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initUi()
-        if (isOnline) loadOnlineData() else loadOfflineData()
+        if (Utils.isNetworkAvailable(this)) loadOnlineData() else loadOfflineData()
     }
 
     private fun initUi() {

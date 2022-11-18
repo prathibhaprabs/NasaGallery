@@ -1,5 +1,7 @@
 package com.example.nasagallery.utilities
 
+import android.content.Context
+import android.net.ConnectivityManager
 import com.example.nasagallery.Nasa
 import com.example.nasagallery.repo.NasaImagesResponseObj
 
@@ -25,6 +27,12 @@ class Utils {
             }
 
             return nasaImagesList
+        }
+
+        fun isNetworkAvailable(mContext: Context) : Boolean {
+            val cm : ConnectivityManager = mContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val info = cm.activeNetworkInfo
+            return info != null && info.isConnected
         }
     }
 }
