@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.nasagallery.utilities.Utils
 import com.example.nasagallery.viewmodel.NasaImagesViewModel
 
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         val mToolbar : Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(mToolbar)
 
-        val layoutManager = GridLayoutManager(this, 2)
+        val layoutManager = StaggeredGridLayoutManager(2, 1)
         rv?.layoutManager = layoutManager
         rv?.adapter = RvAdapter(this, nasaList)
         rv?.setItemViewCacheSize(20);

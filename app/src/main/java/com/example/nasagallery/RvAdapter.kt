@@ -26,10 +26,9 @@ class RvAdapter(
     }
 
     override fun onBindViewHolder(holder: RvViewHolder, position: Int) {
-        val size: Int = mContext.resources.displayMetrics.ydpi.toInt()
 
         Picasso.get().load(nasaImagesList[position].hdurl)
-            .resize(size, size).centerCrop().into(holder.image, object : Callback {
+            .into(holder.image, object : Callback {
                 override fun onSuccess() {
                     holder.progress.visibility = GONE
                 }
@@ -44,8 +43,9 @@ class RvAdapter(
             val intent = Intent(mContext, ImageDetailsActivity::class.java)
             intent.putExtra("nasaImages", nasaImagesList)
             intent.putExtra("imagePosition", position)
-            mContext.startActivity(intent,
-                ActivityOptions.makeSceneTransitionAnimation(mContext as Activity).toBundle())
+            mContext.startActivity(
+                intent, ActivityOptions.makeSceneTransitionAnimation(mContext as Activity).toBundle()
+            )
         }
     }
 
