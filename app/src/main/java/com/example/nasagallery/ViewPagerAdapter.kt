@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -28,9 +30,19 @@ class ViewPagerAdapter(
         val mLayoutInflater = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val itemView: View = mLayoutInflater.inflate(R.layout.view_pager_item, container, false)
         val imageView: ImageView = itemView.findViewById(R.id.fullImage)
+        val progress: ProgressBar = itemView.findViewById(R.id.progress)
         val textView: TextView = itemView.findViewById(R.id.text)
 
-        Picasso.get().load(nasaImagesList[position].hdurl).into(imageView)
+        Picasso.get().load(nasaImagesList[position].hdurl).into(imageView, object : Callback {
+            override fun onSuccess() {
+                progress.visibility = View.GONE
+            }
+
+            override fun onError(e: Exception?) {
+                progress.visibility = View.GONE
+                Picasso.get().load(android.R.drawable.ic_delete).into(imageView)
+            }
+        })
         textView.text = nasaImagesList[position].title
 
         Objects.requireNonNull(container).addView(itemView)

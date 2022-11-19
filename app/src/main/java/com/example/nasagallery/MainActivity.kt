@@ -1,23 +1,20 @@
 package com.example.nasagallery
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nasagallery.utilities.Utils
 import com.example.nasagallery.viewmodel.NasaImagesViewModel
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.io.IOException
-import java.io.InputStream
-import java.nio.charset.Charset
 
 class MainActivity : AppCompatActivity() {
-    var isOnline = true
     private val nasaList: ArrayList<Nasa> = ArrayList()
     var rv: RecyclerView? = null
+    var errorText: TextView? = null
     private lateinit var mNasaImagesViewModel: NasaImagesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,11 +22,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initUi()
-        if (Utils.isNetworkAvailable(this)) loadOnlineData() else loadOfflineData()
+        if (Utils.isNetworkAvailable(this)) loadOnlineData() else showDeviceOfflineMessage()
     }
 
     private fun initUi() {
         rv = findViewById(R.id.thumbnailsRv)
+        errorText = findViewById(R.id.errorText)
         mNasaImagesViewModel = ViewModelProvider(this)[NasaImagesViewModel::class.java]
         val mToolbar : Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(mToolbar)
@@ -40,34 +38,17 @@ class MainActivity : AppCompatActivity() {
         rv?.setItemViewCacheSize(20);
     }
 
-    private fun loadOfflineData() {
-
-        val json: String? = try {
-            val stream: InputStream = assets.open("nasa_json")
-            val size: Int = stream.available()
-            val buffer = ByteArray(size)
-            stream.read(buffer)
-            stream.close()
-            String(buffer, Charset.defaultCharset())
-        } catch (ex: IOException) {
-            null
-        }
-
-        nasaList.addAll(
-            Gson().fromJson<ArrayList<Nasa>>(
-                json,
-                object : TypeToken<List<Nasa>>() {}.type
-            )
-        )
-        rv?.adapter?.notifyDataSetChanged()
+    private fun showDeviceOfflineMessage() {
+        errorText?.visibility = View.VISIBLE
     }
 
     private fun loadOnlineData() {
+        errorText?.visibility = View.GONE
         mNasaImagesViewModel.getNasaImages()
-        mNasaImagesViewModel.observeNasaImagesLiveData().observe(this, {
+        mNasaImagesViewModel.observeNasaImagesLiveData().observe(this) {
             nasaList.clear()
             nasaList.addAll(Utils.getNasaImages(it))
             rv?.adapter?.notifyDataSetChanged()
-        })
+        }
     }
 }
